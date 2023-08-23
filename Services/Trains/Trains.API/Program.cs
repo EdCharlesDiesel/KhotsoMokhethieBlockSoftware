@@ -1,4 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Trains.API.Context;
 using Trains.API.Helper;
 using Trains.API.Repositories;
 
@@ -22,7 +24,12 @@ namespace Trains.API
                 c.OperationFilter<SwaggerFileOperationFilter>();
             });
 
-            //builder.Services.AddScoped<ITrainsRepository, TrainsRepository>();
+            builder.Services.AddDbContext<TrainsDbContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));            
+
+            builder.Services.AddScoped<ITrainsRepository, TrainsRepository>();
+
+            
 
             var app = builder.Build();
 

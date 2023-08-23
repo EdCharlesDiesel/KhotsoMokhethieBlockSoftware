@@ -1,6 +1,4 @@
-﻿using Dapper;
-using Microsoft.EntityFrameworkCore;
-using Npgsql;
+﻿using Microsoft.EntityFrameworkCore;
 using Trains.API.Context;
 using Trains.API.Entities;
 
@@ -9,7 +7,6 @@ namespace Trains.API.Repositories
 {
     public class TrainsRepository : ITrainsRepository
     {       
-
         private readonly TrainsDbContext _context;
 
         public TrainsRepository(TrainsDbContext context)
@@ -22,7 +19,7 @@ namespace Trains.API.Repositories
             return await _context.attachments.ToListAsync();
         }
 
-        public async Task<Attachment> GetAttachmentByNameAsync(string documentName)
+        public async Task<Attachment> GetResultsByFileNameAsync(string documentName)
         {
             return await _context.attachments.Where(x => x.FileName == documentName).FirstOrDefaultAsync();
         }
@@ -30,12 +27,6 @@ namespace Trains.API.Repositories
         public async Task CreateAttachmentAsync(Attachment attachmentPayload)
         {
             _context.attachments.Add(attachmentPayload);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task UpdateAttachment(Attachment attachment)
-        {
-            _context.attachments.Update(attachment);
             await _context.SaveChangesAsync();
         }
 
