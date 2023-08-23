@@ -1,0 +1,19 @@
+version: '3.4'
+
+services:
+  trainsdb:
+    image: postgres
+
+  pgadmin:
+    image: dpage/pgadmin4
+    
+  trains.api:
+    image: ${DOCKER_REGISTRY-}trainsapi
+    build:
+      context: .
+      dockerfile: Trains.API/Dockerfile
+  
+volumes:       
+   postgres_data:
+   pgadmin_data:
+
