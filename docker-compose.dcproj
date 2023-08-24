@@ -3,7 +3,7 @@
   <PropertyGroup Label="Globals">
     <ProjectVersion>2.1</ProjectVersion>
     <DockerTargetOS>Linux</DockerTargetOS>
-    <ProjectGuid>9b8c7415-fc35-4a08-a3cd-f0d9bb906309</ProjectGuid>
+    <ProjectGuid>e5ca3ecb-9ceb-4bc3-8424-2475559d681e</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/swagger</DockerServiceUrl>
     <DockerServiceName>trains.api</DockerServiceName>
