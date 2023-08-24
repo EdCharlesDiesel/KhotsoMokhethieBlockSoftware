@@ -1,9 +1,9 @@
 ﻿namespace Trains.API.Helper
 {
-    public class Fileupload
+    public static class Fileupload
     {
 
-        private static void ReadFile(string fileName)
+        public static void ReadFile(string fileName)
         {
             string word = "start = 0";
             try

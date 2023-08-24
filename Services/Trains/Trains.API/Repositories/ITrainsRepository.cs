@@ -5,10 +5,10 @@ namespace Trains.API.Repositories
 {
     public interface ITrainsRepository
     {
-        Task<IEnumerable<Attachment>> GetAttachmentsAsync();
-        Task<Attachment> GetResultsByFileNameAsync(string documentName);        
-        Task CreateAttachmentAsync(Attachment attachment);        
-        Task DeleteAttachment(string documentName);
-        Task SaveChangesAsync();
+        public Task PostFileAsync(IFormFile fileData);
+
+        public Task PostMultiFileAsync(List<IFormFile> fileData);
+
+        public Task DownloadFileById(Guid fileName);
     }
 }

@@ -3,15 +3,20 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Trains.API.Entities
 {
-    public class Attachment
+    [Table("FileDetails")]
+    public class FileDetails
     {
         [Key]
-        public int id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+        
         [Column(TypeName = "nvarchar(50)")]
         public string FileName { set; get; }
+
         [Column(TypeName = "nvarchar(50)")]
-        public string Description { set; get; }
+        public string? FileType { set; get; }
+
         [Column(TypeName = "varbinary(MAX)")]
-        public byte[] attachment { set; get; }
+        public byte[] FileData { set; get; }
     }
 }

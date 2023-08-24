@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using Trains.API.Entities;
+using Trains.API.Helper;
 using Trains.API.Repositories;
 
 namespace Trains.API.Controllers
@@ -23,88 +24,124 @@ namespace Trains.API.Controllers
         }
 
         /// <summary>
-        /// Upload document
+        /// Single File Upload
         /// </summary>
-        /// <param name="myFile"></param>
+        /// <param name="file"></param>
         /// <returns></returns>
-        [HttpPost]
-        public async Task<IActionResult> UploadDocument([FromForm(Name = "myFile")] IFormFile myFile)
+        [HttpPost("PostSingleFile")]
+        public async Task<ActionResult> PostSingleFile([FromForm] IFormFile  fileDetails)
         {
-            using (var fileContentStream = new MemoryStream())
+            if (fileDetails == null)
             {
-                await myFile.CopyToAsync(fileContentStream);
-                await System.IO.File.WriteAllBytesAsync(Path.Combine(folderPath, myFile.FileName), fileContentStream.ToArray());
+                return BadRequest();
             }
 
-            ReadFile(folderName);
-
-            return CreatedAtRoute(routeName: "myFile", routeValues: new { filename = myFile.FileName }, value: null); ;
-        }
-
-        private void ReadFile(string folderName)
-        {
-            throw new NotImplementedException();
+            try
+            {
+               await _repository.PostFileAsync(fileDetails);
+                return Ok();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         /// <summary>
-        /// Get the uploaded Document 
+        /// Multiple File Upload
         /// </summary>
-        /// <param name="filename"></param>
+        /// <param name="file"></param>
         /// <returns></returns>
-        [HttpGet("{filename}", Name = "myFile")]
-        public async Task<IActionResult> GetUploadedDocument([FromRoute] String filename)
+        [HttpPost("PostMultipleFile")]
+        public async Task<ActionResult> PostMultipleFile([FromForm] List<IFormFile> fileDetails)
         {
-            var filePath = Path.Combine(folderPath, filename);
-            if (System.IO.File.Exists(filePath))
+            if (fileDetails == null)
             {
-                return File(await System.IO.File.ReadAllBytesAsync(filePath), "application/octet-stream", filename);
+                return BadRequest();
             }
-            return NotFound();
+
+            try
+            {
+                await _repository.PostMultiFileAsync(fileDetails);
+                return Ok();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         /// <summary>
-        /// Get the uploaded Document 
+        /// Download File
         /// </summary>
-        /// <param name="filename"></param>
+        /// <param name="file"></param>
         /// <returns></returns>
-        [HttpGet(Name ="Get Results")]
-        public async Task<IActionResult> GetResults([FromRoute] String filename)
+        [HttpGet("DownloadFile")]
+        public async Task<ActionResult> DownloadFile(Guid id)
         {
-            var filePath = Path.Combine(folderPath, filename);
-            if (System.IO.File.Exists(filePath))
+            if (id == Guid.Empty)
             {
-                return File(await System.IO.File.ReadAllBytesAsync(filePath), "application/octet-stream", filename);
+                return BadRequest();
             }
-            return NotFound();
+
+            try
+            {
+                await _repository.DownloadFileById(id);
+                return Ok();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
+        ///// <summary>
+        ///// Upload a text document with the coordinations
+        ///// </summary>
+        ///// <param name="myFile"></param>
+        ///// <returns></returns>
         //[HttpPost]
-        //[ProducesResponseType(typeof(Attachment), (int)HttpStatusCode.OK)]
-        //public async Task<ActionResult<Attachment>> UploadFile([FromBody] Attachment attachment)
+        //public async Task<IActionResult> UploadDocument([FromForm(Name = "myFile")] IFormFile myFile)
         //{
-        //    await _repository.CreateAttachment(attachment);
-            
-        //    return CreatedAtRoute("GetAttachment", 
-        //        new  { 
-                    
-        //        }, attachment);
+        //    using (var fileContentStream = new MemoryStream())
+        //    {
+        //        await myFile.CopyToAsync(fileContentStream);
+        //        await System.IO.File.WriteAllBytesAsync(Path.Combine(folderPath, myFile.FileName), fileContentStream.ToArray());
+        //    }           
+
+        //    return CreatedAtRoute(routeName: "myFile", routeValues: new { filename = myFile.FileName }, value: null); ;
+        //}  
+
+        ///// <summary>
+        ///// Get the uploaded Document 
+        ///// </summary>
+        ///// <param name="filename"></param>
+        ///// <returns></returns>
+        //[HttpGet("{fileName}", Name = "myFile")]
+        //public async Task<IActionResult> GetResultFromUploadDocument([FromRoute] String filename)
+        //{
+        //    var filePath = Path.Combine(folderPath, filename);
+        //    if (System.IO.File.Exists(filePath))
+        //    {
+        //        return File(await System.IO.File.ReadAllBytesAsync(filePath), "application/octet-stream", filename);
+        //    }
+
+        //    Fileupload.ReadFile(folderName);
+        //    return NotFound();
         //}
 
-        //[HttpPut]
-        //[ProducesResponseType(typeof(Attachment), (int)HttpStatusCode.OK)]
-        //public async Task<ActionResult<Attachment>> UpdateAttachment([FromBody] Attachment attachment)
+        ///// <summary>
+        ///// Delete an upload document.
+        ///// </summary>
+        ///// <param name="attachment"></param>
+        ///// <returns>No Content</returns>      
+        //[HttpDelete("{documentName}", Name = "DeleteAttachment")]
+        //[ProducesResponseType(typeof(void), (int)HttpStatusCode.OK)]
+        //public async Task<ActionResult<bool>> DeleteAttachment(string attachment)
         //{
-        //    return Ok(await _repository.UpdateAttachment(attachment));
+        //    return Ok();
+        //    //return Ok(await _repository.DeleteAttachment(attachment));
         //}
-
-        [HttpDelete("{documentName}", Name = "DeleteAttachment")]
-        [ProducesResponseType(typeof(void), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<bool>> DeleteAttachment(string attachment)
-        {
-            return Ok();
-            //return Ok(await _repository.DeleteAttachment(attachment));
-        }
-
     }
 }
 

@@ -14,33 +14,86 @@ namespace Trains.API.Repositories
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task<IEnumerable<Attachment>> GetAttachmentsAsync()
+        public async Task PostFileAsync(IFormFile fileData)
         {
-            return await _context.attachments.ToListAsync();
+            try
+            {
+                var fileDetails = new FileDetails()
+                {
+                    //Id = new Guid(),
+                    FileName = fileData.FileName,
+                    FileType = null,
+                };
+
+                using (var stream = new MemoryStream())
+                {
+                    fileData.CopyTo(stream);
+                    fileDetails.FileData = stream.ToArray();
+                }
+
+                var result = _context.FileDetails.Add(fileDetails);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public async Task<Attachment> GetResultsByFileNameAsync(string documentName)
+        public async Task PostMultiFileAsync(List<IFormFile> fileData)
         {
-            return await _context.attachments.Where(x => x.FileName == documentName).FirstOrDefaultAsync();
+            try
+            {
+                foreach (FileUploadModel file in fileData)
+                {
+                    var fileDetails = new FileDetails()
+                    {
+                        Id = new Guid(),
+                        FileName = file.FileDetails.FileName,
+                        FileType = "",
+                    };
+
+                    using (var stream = new MemoryStream())
+                    {
+                        file.FileDetails.CopyTo(stream);
+                        fileDetails.FileData = stream.ToArray();
+                    }
+
+                    var result = _context.FileDetails.Add(fileDetails);
+                }
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public async Task CreateAttachmentAsync(Attachment attachmentPayload)
+        public async Task DownloadFileById(Guid Id)
         {
-            _context.attachments.Add(attachmentPayload);
-            await _context.SaveChangesAsync();
+            try
+            {
+                var file = _context.FileDetails.Where(x => x.Id == Id).FirstOrDefaultAsync();
+
+                var content = new System.IO.MemoryStream(file.Result.FileData);
+                var path = Path.Combine(
+                   Directory.GetCurrentDirectory(), "FileDownloaded",
+                   file.Result.FileName);
+
+                await CopyStream(content, path);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public async Task DeleteAttachment(string documentName)
-        { 
-            if (string.IsNullOrEmpty(documentName)) throw new ArgumentNullException(nameof(documentName));
-            var documentToDelete = await _context.attachments.Where(x => x.FileName == documentName).FirstOrDefaultAsync();
-            _context.attachments.Remove(documentToDelete);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task SaveChangesAsync()
+        public async Task CopyStream(Stream stream, string downloadPath)
         {
-            await _context.SaveChangesAsync();
+            using (var fileStream = new FileStream(downloadPath, FileMode.Create, FileAccess.Write))
+            {
+                await stream.CopyToAsync(fileStream);
+            }
         }
     }
 }

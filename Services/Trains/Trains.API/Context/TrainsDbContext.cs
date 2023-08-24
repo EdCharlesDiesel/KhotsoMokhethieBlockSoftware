@@ -9,16 +9,8 @@ namespace Trains.API.Context
         {
         }     
 
-        public DbSet<Attachment> attachments { get; set; }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            //TODO Make sure we fix this
-            modelBuilder.Entity<Attachment>();
-            //.HasData{
-            //    Attachment attachment = new Attachment();
-            //}
-        }
+        public DbSet<FileDetails> FileDetails { get; set; }
+      
     }
 }
 
