@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic;
+using System.Text;
 using Trains.API.Context;
 using Trains.API.Entities;
 using Trains.API.Helper;
@@ -80,6 +81,7 @@ namespace Trains.API.Repositories
                 var path = Path.Combine(
                    Directory.GetCurrentDirectory(), "FileDownloaded",
                    file.Result.FileName);
+                await CopyStream(content, path);
 
                 //Read File and apply algorithmn.
                 int start = 0;
@@ -93,22 +95,18 @@ namespace Trains.API.Repositories
                     };
 
                 var result = ShortestDistanceAlgorithmn.CalculateDistance(start, roads);
-                object test = new object();
+                var newString = new StringBuilder();
                 foreach (var item in result)
                 {
-                    try
-                    {
-                        File.WriteAllText(path, item.ToString());
-                        await CopyStream(content, path);
-                    }
-                    catch (DirectoryNotFoundException e)
-                    {
-                        
-                    }
+                    if (item == -1)
+                        newString.Append("Output #:NO ROUTE");
+                    newString.Append($"Output #:{item}");
+                    newString.Append(Environment.NewLine);
                 }
+                    
+               
 
-
-                await CopyStream(content, path);
+                File.WriteAllText(path, $"Output #: {newString}");               
             }
             catch (Exception)
             {

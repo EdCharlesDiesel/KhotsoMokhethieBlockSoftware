@@ -94,54 +94,6 @@ namespace Trains.API.Controllers
                 throw;
             }
         }
-
-        ///// <summary>
-        ///// Upload a text document with the coordinations
-        ///// </summary>
-        ///// <param name="myFile"></param>
-        ///// <returns></returns>
-        //[HttpPost]
-        //public async Task<IActionResult> UploadDocument([FromForm(Name = "myFile")] IFormFile myFile)
-        //{
-        //    using (var fileContentStream = new MemoryStream())
-        //    {
-        //        await myFile.CopyToAsync(fileContentStream);
-        //        await System.IO.File.WriteAllBytesAsync(Path.Combine(folderPath, myFile.FileName), fileContentStream.ToArray());
-        //    }           
-
-        //    return CreatedAtRoute(routeName: "myFile", routeValues: new { filename = myFile.FileName }, value: null); ;
-        //}  
-
-        ///// <summary>
-        ///// Get the uploaded Document 
-        ///// </summary>
-        ///// <param name="filename"></param>
-        ///// <returns></returns>
-        //[HttpGet("{fileName}", Name = "myFile")]
-        //public async Task<IActionResult> GetResultFromUploadDocument([FromRoute] String filename)
-        //{
-        //    var filePath = Path.Combine(folderPath, filename);
-        //    if (System.IO.File.Exists(filePath))
-        //    {
-        //        return File(await System.IO.File.ReadAllBytesAsync(filePath), "application/octet-stream", filename);
-        //    }
-
-        //    Fileupload.ReadFile(folderName);
-        //    return NotFound();
-        //}
-
-        ///// <summary>
-        ///// Delete an upload document.
-        ///// </summary>
-        ///// <param name="attachment"></param>
-        ///// <returns>No Content</returns>      
-        //[HttpDelete("{documentName}", Name = "DeleteAttachment")]
-        //[ProducesResponseType(typeof(void), (int)HttpStatusCode.OK)]
-        //public async Task<ActionResult<bool>> DeleteAttachment(string attachment)
-        //{
-        //    return Ok();
-        //    //return Ok(await _repository.DeleteAttachment(attachment));
-        //}
     }
 }
 
